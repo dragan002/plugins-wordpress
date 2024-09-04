@@ -8,26 +8,27 @@
  * Text Domain: simple-contact-form
  */
 
+// Prevent direct access
 if(!defined('ABSPATH')) {
-    echo "What are you trying to do?";
-    exit;
- }
- //If ABSPATH is not defined,
- // that the plugin is being accessed directly 
+    exit('Direct access not allowed.');
+}
 
- class SimpleContactForm  {
+class SimpleContactForm  {
 
+    // Constructor to add hooks
     public function __construct()
     {
-        add_action('init', array($this, 'CreateCustomPostType'));
+        add_action('init', array($this, 'create_custom_post_type'));
+        add_action('wp_enqueue_scripts', array($this, 'load_assets'));
     }
 
-    public function CreateCustomPostType()
+    // Create custom post type for contact form
+    public function create_custom_post_type()
     {
         $args = array(
-            'public'                =>true,
+            'public'                => true,
             'has_archive'           => true,
-            'supports'              =>array('title'),
+            'supports'              => array('title'),
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'capability'            => 'manage_options',
@@ -40,6 +41,24 @@ if(!defined('ABSPATH')) {
 
         register_post_type('simple_contact_form', $args);
     }
- }
 
- new SimpleContactForm;
+    // Load CSS and JS assets
+    public function load_assets() {
+        wp_enqueue_style( 'simple_contact_form',
+            plugin_dir_url( __FILE__ ) . 'css/simple-contact-form.css',
+            array(),
+            '1.0.0', // Corrected version format
+            'all'
+        );
+
+        wp_enqueue_script( 'simple_contact_form',
+            plugin_dir_url( __FILE__ ) . 'js/simple-contact-form.js',
+            array('jquery'),
+            '1.0.0', // Corrected version format
+            true
+        );
+    }
+
+}
+
+new SimpleContactForm();
