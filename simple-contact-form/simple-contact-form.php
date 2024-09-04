@@ -20,6 +20,7 @@ class SimpleContactForm  {
     {
         add_action('init', array($this, 'create_custom_post_type'));
         add_action('wp_enqueue_scripts', array($this, 'load_assets'));
+        add_shortcode('contact-form', array($this, 'load_shortcode'));
     }
 
     // Create custom post type for contact form
@@ -57,6 +58,11 @@ class SimpleContactForm  {
             '1.0.0', // Corrected version format
             true
         );
+    }
+
+    public function load_shortcode()
+    {
+        return "hello shortcode";
     }
 
 }
