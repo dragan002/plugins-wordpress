@@ -44,25 +44,65 @@ class SimpleContactForm  {
     }
 
     // Load CSS and JS assets
+
     public function load_assets() {
+        // Enqueue Bootstrap CSS
+        wp_enqueue_style( 'bootstrap-css',
+            'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css',
+            array(),
+            '4.5.2'
+        );
+    
+        // Enqueue custom CSS
         wp_enqueue_style( 'simple_contact_form',
             plugin_dir_url( __FILE__ ) . 'css/simple-contact-form.css',
             array(),
-            '1.0.0', // Corrected version format
+            '1.0.0',
             'all'
         );
-
+    
+        // Enqueue Bootstrap JS
+        wp_enqueue_script( 'bootstrap-js',
+            'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js',
+            array('jquery'),
+            '4.5.2',
+            true
+        );
+    
+        // Enqueue custom JS
         wp_enqueue_script( 'simple_contact_form',
             plugin_dir_url( __FILE__ ) . 'js/simple-contact-form.js',
             array('jquery'),
-            '1.0.0', // Corrected version format
+            '1.0.0',
             true
         );
     }
+    
 
     public function load_shortcode()
     {
-        return "hello shortcode";
+        ?> 
+        <div class="simple-contact-form">
+            <h1>Send Us Email</h1>
+            <p>Please fill the form </p>
+            <form action="simple-contact-form form" >
+                    <div class="form-group">
+                        <input type="text" placeholder="Name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" placeholder="Phone" class="form-control">
+                    </div>
+        
+                    <textarea name="" placeholder="Type your message" id=""></textarea>
+                    <button class="btn btn-success btn-block">Send message</button>
+
+
+                </form>
+            </div>
+        <?php
     }
 
 }

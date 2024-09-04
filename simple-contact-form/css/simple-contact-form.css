@@ -1,3 +1,8 @@
 body {
     background: red;
 }
+
+.simple-contact-form form {
+    width: 40%;
+    margin: 0 auto;
+}
