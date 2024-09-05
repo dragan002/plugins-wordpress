@@ -73,5 +73,6 @@
         "zip",
         "zlib",
         "wordpress"
-    ]
+    ],
+    "php.version": "8.4"
 }

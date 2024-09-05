@@ -18,9 +18,13 @@ class SimpleContactForm  {
     // Constructor to add hooks
     public function __construct()
     {
-        add_action('init', array($this, 'create_custom_post_type'));
-        add_action('wp_enqueue_scripts', array($this, 'load_assets'));
-        add_shortcode('contact-form', array($this, 'load_shortcode'));
+        add_action      ('init', array($this, 'create_custom_post_type'));
+        add_action      ('wp_enqueue_scripts', array($this, 'load_assets'));
+        add_shortcode   ('contact-form', array($this, 'load_shortcode'));
+        add_action      ('wp_footer', array($this, 'load_scripts'));
+
+    //register API
+        add_action      ('rest_api_init', array($this, 'register_rest_api'));
     }
 
     // Create custom post type for contact form
@@ -76,16 +80,17 @@ class SimpleContactForm  {
             '1.0.0',
             true
         );
+
+        
     }
     
-
     public function load_shortcode()
     {
         ?> 
         <div class="simple-contact-form">
             <h1>Send Us Email</h1>
             <p>Please fill the form </p>
-            <form action="simple-contact-form form" >
+            <form action="simple-contact-form form" id="simple-contact-form__form">
                     <div class="form-group">
                         <input type="text" placeholder="Name" class="form-control">
                     </div>
@@ -105,6 +110,44 @@ class SimpleContactForm  {
         <?php
     }
 
+    public function load_scripts()
+    {
+        ?> 
+            <script>
+                
+                (function($){
+                    $('#simple-contact-form__form').submit(function(event){
+                        event.preventDefault();
+                    
+                        var form = $(this).serialize();
+
+                        $.ajax({
+                            method:'post',
+                            url: '<?php echo get_rest_url(null, 'simple-contact-form/v1/send-email'); ?>',
+                            headers: { 'X-WP-Nonce': nonce },
+                            data: form
+                        });
+                    });
+                })(jQuery)
+            </script>
+        <?php
+    }
+
+    public function register_rest_api() 
+    {
+        register_rest_route('simple-contact-form/v1', 'send_email', array(
+            
+            'methods'   => 'POST',
+            'callback'  => array($this, 'handle_contact_form')
+        ));
+    }
+
+    public function handle_contact_form($data) {
+        $headers    = $data->get_headers();
+        $params     = $data->get_params();
+
+        echo json_encode($headers);
+    }
 }
 
 new SimpleContactForm();
