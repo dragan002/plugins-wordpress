@@ -81,6 +81,12 @@ class SimpleContactForm  {
             true
         );
 
+           // Localize script to pass nonce and REST URL to JavaScript
+           wp_localize_script( 'simple_contact_form', 'simpleContactForm', array(
+            'rest_url' => get_rest_url(null, 'simple-contact-form/v1/send_email'),
+            'nonce'    => wp_create_nonce('wp_rest')
+        ));
+
         
     }
     
@@ -110,28 +116,35 @@ class SimpleContactForm  {
         <?php
     }
 
-    public function load_scripts()
-    {
-        ?> 
-            <script>
-                
-                (function($){
-                    $('#simple-contact-form__form').submit(function(event){
-                        event.preventDefault();
+    public function load_scripts() {
+        ?>
+        <script>
+            (function($) {
+                $('#simple-contact-form__form').submit(function(event) {
+                    event.preventDefault();
                     
-                        var form = $(this).serialize();
-
-                        $.ajax({
-                            method:'post',
-                            url: '<?php echo get_rest_url(null, 'simple-contact-form/v1/send-email'); ?>',
-                            headers: { 'X-WP-Nonce': nonce },
-                            data: form
-                        });
+                    var form = $(this).serialize();
+    
+                    $.ajax({
+                        method: 'POST',
+                        url: simpleContactForm.rest_url, // Use localized REST URL
+                        headers: {
+                            'X-WP-Nonce': simpleContactForm.nonce // Use localized nonce
+                        },
+                        data: form,
+                        success: function(response) {
+                            alert('Form submitted successfully!');
+                        },
+                        error: function() {
+                            alert('There was an error.');
+                        }
                     });
-                })(jQuery)
-            </script>
+                });
+            })(jQuery);
+        </script>
         <?php
     }
+    
 
     public function register_rest_api() 
     {
