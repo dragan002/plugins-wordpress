@@ -37,11 +37,11 @@ class SimpleContactForm  {
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'capability'            => 'manage_options',
+            'menu_icon'         => 'dashicons-media-text',
             'labels' => array(
                 'name'          => 'Contact Form',
                 'singular_name' => 'Contact Form Entry'
             ),
-            'menu_icon'         => 'dashicons-media-text'
         );
 
         register_post_type('simple_contact_form', $args);
@@ -133,6 +133,7 @@ class SimpleContactForm  {
                         },
                         data: form,
                         success: function(response) {
+                            console.log(response);  // Log the response to check the message
                             alert('Form submitted successfully!');
                         },
                         error: function() {
@@ -159,7 +160,21 @@ class SimpleContactForm  {
         $headers    = $data->get_headers();
         $params     = $data->get_params();
 
-        echo json_encode($headers);
+        $nonce = $headers['x_wp_nonce'][0];
+
+        if(!wp_verify_nonce($nonce, 'wp_rest')) {
+            return new WP_REST_Response('message not sent', 422);
+        }
+
+        $post_id = wp_insert_post([
+            'post_type' => 'simple_contact_form',
+            'post_title' => 'Contact enquiry2',
+            'post_status' => 'publish'
+        ]);
+
+        if($post_id) {
+            return new WP_REST_Response('Thank you for your email', 200);
+        }
     }
 }
 
