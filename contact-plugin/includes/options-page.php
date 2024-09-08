@@ -7,6 +7,8 @@ add_action('after_setup_theme', 'load_carbon_fields');
 
 add_action('carbon_fields_register_fields', 'create_options_page');
 
+add_action('wp_enqueue_scripts', 'enqueue_jquery_for_form');
+
 
 function load_carbon_fields()
 {
@@ -16,6 +18,14 @@ function load_carbon_fields()
     } else {
         error_log('Carbon Fields is NOT loaded');
     }
+}
+
+function enqueue_jquery_for_form() {
+    // Enqueue jQuery (WordPress already includes it)
+    wp_enqueue_script('jquery');
+
+    // Add your custom script for the form
+    wp_enqueue_script('custom-contact-form', plugin_dir_url(__FILE__) . '/js/custom-contact-form.js', array('jquery'), '1.0', true);
 }
 
 function create_options_page()

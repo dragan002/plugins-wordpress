@@ -30,6 +30,8 @@
             require_once( MY_PLUGIN_PATH . '/includes/utilities.php');
 
             require_once MY_PLUGIN_PATH . '/includes/options-page.php';
+
+            require_once MY_PLUGIN_PATH . '/includes/contact-form.php';
         }
      }
 
